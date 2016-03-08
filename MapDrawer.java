@@ -6,12 +6,13 @@ import java.util.List;
 
 
 public class MapDrawer extends GUI{
-	private  List<Node> nodeCollection;
+	private List<Node> nodeCollection;
+	private List<Segment> segmentCollection;
 	private int scale;
 	
 	public  MapDrawer () {
 		nodeCollection = new ArrayList<Node>();
-		scale = 800;
+		scale = 10;
 	}
 
 
@@ -21,6 +22,12 @@ public class MapDrawer extends GUI{
 			node.setScale(scale);
 			node.draw(g);		
 		}
+		for (Segment segment : segmentCollection) {
+//			System.out.println(segment.toString());
+			segment.setScale(scale);
+			segment.draw(g);
+		}
+
 	}
 
 	@Override
@@ -47,13 +54,14 @@ public class MapDrawer extends GUI{
 
 	private void zoom(int step) {
 		scale = scale + step;
-		System.out.println(scale);
+//		System.out.println(scale);
 	}
 
 
 	@Override
-	protected void onLoad(File nodesFile, File roads, File segments, File polygons) {
+	protected void onLoad(File nodesFile, File roads, File segmentsFile, File polygons) {
 		 nodeCollection = new NodeCollection().getNodes(nodesFile);
+		 segmentCollection = new SegmentCollection().getSegments(segmentsFile);
 		 redraw();
 	}
 	

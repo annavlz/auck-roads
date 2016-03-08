@@ -27,18 +27,20 @@ public class NodeCollection {
 	        	nodes.add(node);
 	         }       
 	         br.close();
-	         System.out.println(nodes.size());
 	      } catch(Exception e){
 	         e.printStackTrace();
 	      }
 	}
 	
-//	public String toString() {
-//		return "Nodes: " + nodes.get(0).toString();
-//	}
-//	
-//	public static void main(String[] args) {
-//		new NodeCollection();
-//	}
+	public String toString() {
+		return "Nodes: " + nodes.get(0).toString();
+	}
+	
+	public static void main(String[] args) {
+		String path = "C:/Users/Anna/Desktop/COMP261/Assign1/261a1_data/data/small/nodeID-lat-lon.tab";
+		File file = new File(path);
+		List<Node> nodesEx = new NodeCollection().getNodes(file);
+		System.out.println(nodesEx.toString());
+	}
 
 }

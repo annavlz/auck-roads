@@ -14,7 +14,7 @@ public class Node {
 		double lat = Double.parseDouble(parts[1]);
 		double lon = Double.parseDouble(parts[2]);
 		loc = Location.newFromLatLon(lat, lon);
-//		scale = 800;
+		scale = 800;
 	}
 	
 	public void setScale(int scale) {
@@ -32,12 +32,12 @@ public class Node {
 		g.setColor(new Color(  0,   0, 255));
 		g.fillRect(nodeLoc.x, nodeLoc.y, 2, 2);
 	}
-	public String toString() {
-		return "NodeId: " + this.id + ", Lat: " + this.loc.x + ", Lon: " + this.loc.y;
-	}
-	
-	public static void main(String[] args) {
-		Node testNode = new Node("10526	-36.871900	174.693080");
-		System.out.print(testNode);
-	}
+//	public String toString() {
+//		return "NodeId: " + this.id + ", Lat: " + this.loc.x + ", Lon: " + this.loc.y;
+//	}
+//	
+//	public static void main(String[] args) {
+//		Node testNode = new Node("10526	-36.871900	174.693080");
+//		System.out.print(testNode);
+//	}
 }

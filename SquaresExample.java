@@ -93,7 +93,7 @@ public class SquaresExample extends GUI {
 
 		public void draw(Graphics g) {
 			g.setColor(color);
-			g.fillRect(x, y, SQUARE_SIZE, SQUARE_SIZE);
+			g.drawLine(x, y, SQUARE_SIZE, SQUARE_SIZE);
 		}
 
 		public boolean contains(int x, int y) {
