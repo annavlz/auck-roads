@@ -8,6 +8,7 @@ import java.util.Map;
 
 public class MapDrawer extends GUI{
 	private Map<Integer, Node> nodeCollection;
+	private Map<Integer, Road> roadCollection;
 	private List<Segment> segmentCollection;
 	private int scale;
 	private Location origin;
@@ -49,13 +50,13 @@ public class MapDrawer extends GUI{
 				break;
 			case ZOOM_OUT: zoom(-2);
 				break;
-			case NORTH: move(0,-10);
+			case NORTH: move(0,10);
 				break;
-			case SOUTH: move(0,10);
+			case SOUTH: move(0,-10);
 				break;
-			case EAST: move(-10,0);
+			case EAST: move(10,0);
 				break;
-			case WEST: move(10,0);
+			case WEST: move(-10,0);
 				break;
 		default:
 			break;
@@ -64,7 +65,6 @@ public class MapDrawer extends GUI{
 
 	private void zoom(int step) {
 		scale += step;
-//		System.out.println(scale);
 	}
 	
 	private void move(int stX, int stY) {
@@ -73,8 +73,9 @@ public class MapDrawer extends GUI{
 	}
 
 	@Override
-	protected void onLoad(File nodesFile, File roads, File segmentsFile, File polygons) {
+	protected void onLoad(File nodesFile, File roadsFile, File segmentsFile, File polygons) {
 		 nodeCollection = new NodeCollection().getNodes(nodesFile);
+		 roadCollection = new RoadCollection().getRoads(roadsFile);
 		 segmentCollection = new SegmentCollection().getSegments(segmentsFile);
 		 redraw();
 	}
