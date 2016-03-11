@@ -15,9 +15,7 @@ public class Segment {
 	
 	public Segment (String input){
 		String [] parts = input.split("\\s+");
-		
-		scale = 800;
-		origin = new Location(0,0);
+
 		id = Integer.parseInt(parts[0]);
 		length = Double.parseDouble(parts[1]);
 		node1Id = Integer.parseInt(parts[2]);

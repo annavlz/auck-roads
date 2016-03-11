@@ -34,8 +34,8 @@ public class Location {
 
 	// fields are public for easy access, but they are final so that the
 	// location is immutable.
-	public final double x;
-	public final double y;
+	public double x;
+	public double y;
 
 	public Location(double x, double y) {
 		this.x = x;
