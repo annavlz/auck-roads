@@ -1,12 +1,16 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Node {
 	private int id;
 	private Location loc;
 	private int scale;
 	private Location origin;
+	private List<Segment> outNeighbours = new ArrayList<Segment>(2);
+	private List<Segment> inNeighbours = new ArrayList<Segment>(2);
 	
 	public Node (String input){
 		String [] parts = input.split("\\s+");
@@ -47,9 +51,25 @@ public class Node {
 		this.loc = loc;
 	}
 
-//	public String toString() {
-//		return "NodeId: " + this.id + ", Lat: " + this.loc.x + ", Lon: " + this.loc.y;
-//	}
+	public List<Segment> getOutNeighbours() {
+		return outNeighbours;
+	}
+
+	public void setOutNeighbours(List<Segment> outNeighbours) {
+		this.outNeighbours = outNeighbours;
+	}
+
+	public List<Segment> getInNeighbours() {
+		return inNeighbours;
+	}
+
+	public void setInNeighbours(List<Segment> inNeighbours) {
+		this.inNeighbours = inNeighbours;
+	}
+
+	public String toString() {
+		return "NodeId: " + this.id + ", out " + this.outNeighbours.size() + ", in " + this.inNeighbours.size();
+	}
 //	
 //	public static void main(String[] args) {
 //		Node testNode = new Node("10526	-36.871900	174.693080");

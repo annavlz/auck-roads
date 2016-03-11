@@ -18,14 +18,13 @@ public class MapDrawer extends GUI{
 		origin = new Location(50,50);
 	}
 
-
 	@Override
 	protected void redraw(Graphics g) {
-		for (Node node : nodeCollection.values()) {
-			node.setScale(scale);
-			node.setOrigin(origin);
-			node.draw(g);		
-		}
+//		for (Node node : nodeCollection.values()) {
+//			node.setScale(scale);
+//			node.setOrigin(origin);
+//			node.draw(g);		
+//		}
 		for (Segment segment : segmentCollection) {
 			segment.setScale(scale);
 			segment.setOrigin(origin);
@@ -78,11 +77,33 @@ public class MapDrawer extends GUI{
 		 roadCollection = new RoadCollection().getRoads(roadsFile);
 		 segmentCollection = new SegmentCollection().getSegments(segmentsFile);
 		 redraw();
+		 setupCollections();
+	}
+
+
+	private void setupCollections() {
+		for (Segment segment : segmentCollection) {
+			int roadId = segment.getRoadId();
+			int startNodeId = segment.getNode1Id();
+			int endNodeId = segment.getNode2Id();
+			Road road = roadCollection.get(roadId);
+			Node startNode = nodeCollection.get(startNodeId);
+			Node endNode = nodeCollection.get(endNodeId);
+			segment.setRoad(road);
+			segment.setStartNode(startNode);
+			segment.setEndNode(endNode);
+			road.getSegments().add(segment);
+			startNode.getOutNeighbours().add(segment);
+			endNode.getInNeighbours().add(segment);
+			if(road.getOneway() == 0){
+				endNode.getOutNeighbours().add(segment);
+				startNode.getInNeighbours().add(segment);
+			}
+		}
 	}
 	
 	public static void main(String[] args) {
 		new MapDrawer ();
-
 	}
 
 }
