@@ -3,16 +3,16 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 public class MapDrawer extends GUI{
-	private List<Node> nodeCollection;
+	private Map<Integer, Node> nodeCollection;
 	private List<Segment> segmentCollection;
 	private int scale;
 	private Location origin;
 	
 	public  MapDrawer () {
-		nodeCollection = new ArrayList<Node>();
 		scale = 10;
 		origin = new Location(50,50);
 	}
@@ -20,13 +20,12 @@ public class MapDrawer extends GUI{
 
 	@Override
 	protected void redraw(Graphics g) {
-		for (Node node : nodeCollection) {
+		for (Node node : nodeCollection.values()) {
 			node.setScale(scale);
 			node.setOrigin(origin);
 			node.draw(g);		
 		}
 		for (Segment segment : segmentCollection) {
-//			System.out.println(segment.toString());
 			segment.setScale(scale);
 			segment.setOrigin(origin);
 			segment.draw(g);

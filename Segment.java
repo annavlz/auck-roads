@@ -38,7 +38,7 @@ public class Segment {
 	}
 	
 	public void draw(Graphics g) {
-		g.setColor(new Color(  0,   0, 255));
+		g.setColor(new Color(100,100,100));
 		for(int i = 0; i < locations.size()-1; i++){
 			Point p1 = locations.get(i).asPoint(origin, scale);
 			Point p2 = locations.get(i+1).asPoint(origin, scale);

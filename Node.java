@@ -3,18 +3,18 @@ import java.awt.Graphics;
 import java.awt.Point;
 
 public class Node {
-	private final int id;
-	private final Location loc;
+	private int id;
+	private Location loc;
 	private int scale;
 	private Location origin;
 	
 	public Node (String input){
 		String [] parts = input.split("\\s+");
 
-		id = Integer.parseInt(parts[0]);
+		this.setId(Integer.parseInt(parts[0]));
 		double lat = Double.parseDouble(parts[1]);
 		double lon = Double.parseDouble(parts[2]);
-		loc = Location.newFromLatLon(lat, lon);
+		this.setLoc(Location.newFromLatLon(lat, lon));
 	}
 	
 	public void setScale(int scale) {
@@ -26,9 +26,25 @@ public class Node {
 	}
 	
 	public void draw(Graphics g) {
-		Point nodeLoc = loc.asPoint(origin, scale);
+		Point nodeLoc = getLoc().asPoint(origin, scale);
 		g.setColor(new Color(  0,   0, 255));
 		g.fillRect(nodeLoc.x, nodeLoc.y, 2, 2);
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public Location getLoc() {
+		return loc;
+	}
+
+	public void setLoc(Location loc) {
+		this.loc = loc;
 	}
 
 //	public String toString() {
