@@ -15,6 +15,9 @@ public class Segment {
 	private Road road;
 	private Node startNode;
 	private Node endNode;
+	private Color color;
+	private Color blue = new Color(0,0,255);
+
 	
 	public Segment (String input){
 		String [] parts = input.split("\\s+");
@@ -30,6 +33,7 @@ public class Segment {
 			Location tempLoc = Location.newFromLatLon(lat, lon);
 			locations.add(tempLoc);
 		}
+		setColor(blue);
 	}
 	
 	public void setScale(int scale) {
@@ -41,7 +45,7 @@ public class Segment {
 	}
 	
 	public void draw(Graphics g) {
-		g.setColor(new Color(  0,   0, 255));
+		g.setColor(getColor());
 //		Point nodeStart = locations.get(0).asPoint(origin, scale);
 //		g.fillRect(nodeStart.x, nodeStart.y, 2, 2);
 //		Point nodeEnd = locations.get(-1).asPoint(origin, scale);
@@ -103,5 +107,13 @@ public class Segment {
 //		Node testNode = new Node("10526	-36.871900	174.693080");
 //		System.out.print(testNode);
 //	}
+
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
+	}
 }
 

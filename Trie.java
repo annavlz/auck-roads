@@ -1,4 +1,7 @@
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Trie {
 	TrieNode root = new TrieNode();
@@ -34,17 +37,29 @@ public class Trie {
 
 	}
 	
-	public TrieNode getWord (String word){
+	public List<Integer> getWord (String word){
 		node = root;
+		List<Integer> results = new ArrayList<Integer>();
 		String iWord = word.toLowerCase();
 		char[] chars = iWord.toCharArray();
 		for (char c : chars){
 			node = node.getChildren().get(c);
-			
-			for()
 		}
-		System.out.println(node.toString());
-		return node;
+		getAll(node, node.getChildren(), results);
+		System.out.println(results);
+		return results;
+
+	}
+	
+	private void getAll ( TrieNode node, Map<Character, TrieNode> children, List<Integer> results) {
+		if (node.getRoadId() > 0){
+			results.add(node.getRoadId());
+		}
+		if(node.getChildren() != null){
+			for (TrieNode child : children.values()){
+				getAll(child, child.getChildren(), results);
+			}
+		}
 	}
 	
 //	public void main () {

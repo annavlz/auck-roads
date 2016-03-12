@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -13,6 +14,7 @@ public class MapDrawer extends GUI{
 	private Trie trie;
 	private int scale;
 	private Location origin;
+	private Color red = new Color(255,0,0);
 	
 	public  MapDrawer () {
 		scale = 10;
@@ -41,7 +43,20 @@ public class MapDrawer extends GUI{
 	}
 
 	@Override
-	protected void onSearch() {		
+	protected void onSearch() {
+		getTextOutputArea().setText("");
+		String searchWord = getSearchBox().getText();
+		List<Integer> results = trie.getWord(searchWord);
+		for(int roadId : results){
+			Road road = roadCollection.get(roadId);
+			List<Segment> segments = road.getSegments();
+			for(Segment seg : segments){
+				seg.setColor(red);
+			}
+			redraw();
+			getTextOutputArea().append(road.getLabel() + " " + road.getCity() + "\n");
+		}
+		
 	}
 
 	@Override
@@ -113,7 +128,6 @@ public class MapDrawer extends GUI{
 			int roadId = road.getId();
 			trie.addWord(name, roadId);
 		}
-		trie.getWord("Queen st");
 	}
 	
 	public static void main(String[] args) {
