@@ -40,6 +40,8 @@ public class Trie {
 		char[] chars = iWord.toCharArray();
 		for (char c : chars){
 			node = node.getChildren().get(c);
+			
+			for()
 		}
 		System.out.println(node.toString());
 		return node;
