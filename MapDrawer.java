@@ -25,11 +25,14 @@ public class MapDrawer extends GUI{
 //			node.setOrigin(origin);
 //			node.draw(g);		
 //		}
-		for (Segment segment : segmentCollection) {
-			segment.setScale(scale);
-			segment.setOrigin(origin);
-			segment.draw(g);
+		if (segmentCollection != null){
+			for (Segment segment : segmentCollection) {
+				segment.setScale(scale);
+				segment.setOrigin(origin);
+				segment.draw(g);
+			}
 		}
+
 	}
 
 	@Override
