@@ -10,6 +10,7 @@ public class MapDrawer extends GUI{
 	private Map<Integer, Node> nodeCollection;
 	private Map<Integer, Road> roadCollection;
 	private List<Segment> segmentCollection;
+	private Trie trie;
 	private int scale;
 	private Location origin;
 	
@@ -32,7 +33,6 @@ public class MapDrawer extends GUI{
 				segment.draw(g);
 			}
 		}
-
 	}
 
 	@Override
@@ -81,6 +81,7 @@ public class MapDrawer extends GUI{
 		 segmentCollection = new SegmentCollection().getSegments(segmentsFile);
 		 redraw();
 		 setupCollections();
+		 setupTrie();
 	}
 
 
@@ -102,6 +103,15 @@ public class MapDrawer extends GUI{
 				endNode.getOutNeighbours().add(segment);
 				startNode.getInNeighbours().add(segment);
 			}
+		}
+	}
+	
+	private void setupTrie() {
+		trie = new Trie();
+		for (Road road : roadCollection.values()) {
+			String name = road.getLabel() + " " + road.getCity();
+			int roadId = road.getId();
+			trie.addWord(name, roadId);
 		}
 	}
 	

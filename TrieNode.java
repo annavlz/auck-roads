@@ -3,17 +3,15 @@ import java.util.Map;
 public class TrieNode {
 	private char id;
 	private Map<Character, TrieNode> children;
-	private boolean marked;
 	private int roadId;
 	
 	public TrieNode () {
-		this.setChildren(null);
+		this.children = null;
 	}
 	
 	public TrieNode (char letter) {
 		this.id = letter;
-		this.setChildren(null);
-		this.marked = false;
+		this.children = null;
 		this.roadId = 0;
 		
 	}
@@ -29,18 +27,6 @@ public class TrieNode {
 	public void setChildren(Map<Character, TrieNode> children) {
 		this.children = children;
 	}
-	
-	public String toString() {
-		return this.id + " " + this.marked + " " + this.roadId;
-	}
-
-	public boolean isMarked() {
-		return marked;
-	}
-
-	public void setMarked(boolean marked) {
-		this.marked = marked;
-	}
 
 	public int getRoadId() {
 		return roadId;
@@ -48,5 +34,10 @@ public class TrieNode {
 
 	public void setRoadId(int roadId) {
 		this.roadId = roadId;
+	}
+	
+	
+	public String toString() {
+		return this.id + " " + this.roadId;
 	}
 }

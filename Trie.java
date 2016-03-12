@@ -1,3 +1,5 @@
+import java.util.HashMap;
+
 public class Trie {
 	TrieNode root = new TrieNode();
 	TrieNode node;
@@ -7,24 +9,43 @@ public class Trie {
 	}
 	
 	public void addWord (String word, int roadId){
+		node = root;
 		String iWord = word.toLowerCase();
 		char[] chars = iWord.toCharArray();
 		for (char c : chars){
-			if (node.getChildren().get(c) == null) {
+			if (node.getChildren() == null) {
+				node.setChildren(new HashMap<Character, TrieNode>());
 				TrieNode newNode = new TrieNode(c);
 				node.getChildren().put(c, newNode);
 				node = newNode;
 			}
 			else {
-				node = node.getChildren().get(c);
+				if (node.getChildren().get(c) == null) {
+					TrieNode newNode = new TrieNode(c);
+					node.getChildren().put(c, newNode);
+					node = newNode;
+				}
+				else {
+					node = node.getChildren().get(c);
+				}
 			}			
 		}
-		node.setMarked(true);
 		node.setRoadId(roadId);
+		System.out.println(node.getRoadId());
+
 	}
 	
-	public void main () {
-		Trie test = new Trie();
-		test.addWord("help", 12345);
-	}
+//	public void getWord (String word){
+//		node = root;
+//		String iWord = word.toLowerCase();
+//		char[] chars = iWord.toCharArray();
+//		for (char c : chars){
+//			
+//		}
+//	}
+	
+//	public void main () {
+//		Trie test = new Trie();
+//		test.addWord("help", 12345);	
+//	}
 }
