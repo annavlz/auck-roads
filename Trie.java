@@ -31,18 +31,19 @@ public class Trie {
 			}			
 		}
 		node.setRoadId(roadId);
-		System.out.println(node.getRoadId());
 
 	}
 	
-//	public void getWord (String word){
-//		node = root;
-//		String iWord = word.toLowerCase();
-//		char[] chars = iWord.toCharArray();
-//		for (char c : chars){
-//			
-//		}
-//	}
+	public TrieNode getWord (String word){
+		node = root;
+		String iWord = word.toLowerCase();
+		char[] chars = iWord.toCharArray();
+		for (char c : chars){
+			node = node.getChildren().get(c);
+		}
+		System.out.println(node.toString());
+		return node;
+	}
 	
 //	public void main () {
 //		Trie test = new Trie();

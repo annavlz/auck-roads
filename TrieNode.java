@@ -16,10 +16,6 @@ public class TrieNode {
 		
 	}
 	
-	public void addChild (TrieNode child){
-		getChildren().put(child.id, child);
-	}
-
 	public Map<Character, TrieNode> getChildren() {
 		return children;
 	}
@@ -38,6 +34,11 @@ public class TrieNode {
 	
 	
 	public String toString() {
-		return this.id + " " + this.roadId;
+		if (this.roadId == 0) {
+			return "Not found";
+		}
+		else {
+			return this.id + " " + this.roadId;
+		}
 	}
 }

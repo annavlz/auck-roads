@@ -108,11 +108,13 @@ public class MapDrawer extends GUI{
 	
 	private void setupTrie() {
 		trie = new Trie();
-		for (Road road : roadCollection.values()) {
-			String name = road.getLabel() + " " + road.getCity();
-			int roadId = road.getId();
-			trie.addWord(name, roadId);
-		}
+//		for (Road road : roadCollection.values()) {
+//			String name = road.getLabel() + " " + road.getCity();
+//			int roadId = road.getId();
+//			trie.addWord(name, roadId);
+//		}
+		trie.addWord("Queen st", 555);
+		trie.getWord("Queen st");
 	}
 	
 	public static void main(String[] args) {
