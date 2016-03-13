@@ -1,10 +1,15 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 public class MapDrawer extends GUI{
@@ -41,9 +46,28 @@ public class MapDrawer extends GUI{
 
 	@Override
 	protected void onClick(MouseEvent e) {
-		System.out.print(e);	
+		getTextOutputArea().setText("");
+		Point pClick = new Point(e.getX(), e.getY());
+		Location locClick = Location.newFromPoint(pClick, origin, scale);
+		Set<Integer> roadIDs = new HashSet<Integer>();
+		for(Node node : nodeCollection.values()){
+			if(locClick.isClose(node.getLoc(), 0.1)){
+				List<Segment> inSegments = node.getInNeighbours();
+				List<Segment> outSegments = node.getOutNeighbours();
+				for(Segment seg : inSegments){
+					roadIDs.add(seg.getRoadId());
+				}
+				for(Segment seg : outSegments){
+					roadIDs.add(seg.getRoadId());
+				}
+			}
+		}
+		for(int id : roadIDs){
+			Road road = roadCollection.get(id);
+			getTextOutputArea().append(road.getLabel() + " " + road.getCity() + "\n");
+		}
 	}
-
+	
 	@Override
 	protected void onSearch() {
 		if(!prevSegments.isEmpty()){
