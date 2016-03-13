@@ -32,16 +32,4 @@ public class SegmentCollection {
 	         e.printStackTrace();
 	      }
 	}
-
-//	public String toString() {
-//		return "Segments: " + segments.toString();
-//	}
-	
-//	public static void main(String[] args) {
-//		String path = "C:/Users/Anna/Desktop/COMP261/Assign1/261a1_data/data/small/roadSeg-roadID-length-nodeID-nodeID-coords.tab";
-//		File file = new File(path);
-//		List<Segment> segmentsEx = new SegmentCollection().getSegments(file);
-//		System.out.println(segmentsEx.toString());
-//	}
-
 }

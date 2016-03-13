@@ -46,23 +46,12 @@ public class Segment {
 	
 	public void draw(Graphics g) {
 		g.setColor(getColor());
-//		Point nodeStart = locations.get(0).asPoint(origin, scale);
-//		g.fillRect(nodeStart.x, nodeStart.y, 2, 2);
-//		Point nodeEnd = locations.get(-1).asPoint(origin, scale);
-//		g.fillRect(nodeEnd.x, nodeEnd.y, 2, 2);
-		
-//		g.setColor(new Color(100,100,100));
 		for(int i = 0; i < locations.size()-1; i++){
 			Point p1 = locations.get(i).asPoint(origin, scale);
 			Point p2 = locations.get(i+1).asPoint(origin, scale);
-//			System.out.println(p1.x);
 			g.drawLine(p1.x, p1.y, p2.x, p2.y);
 		}
 	}
-//	public String toString() {
-//		return "Locations: " + this.locations;
-//		return "SegmentId: " + this.id + ", " + this.length + ", " + this.node1Id + ", " + this.node2Id;
-//	}
 
 	public int getRoadId() {
 		return roadId;
@@ -99,14 +88,6 @@ public class Segment {
 	public void setEndNode(Node endNode) {
 		this.endNode = endNode;
 	}
-	
-	public String toString() {
-		return this.road.getLabel() + "  " + this.road.getCity() + this.startNode.getId() + this.endNode.getId();
-	}
-//	public static void main(String[] args) {
-//		Node testNode = new Node("10526	-36.871900	174.693080");
-//		System.out.print(testNode);
-//	}
 
 	public Color getColor() {
 		return color;

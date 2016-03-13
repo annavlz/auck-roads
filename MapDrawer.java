@@ -15,19 +15,18 @@ public class MapDrawer extends GUI{
 	private int scale;
 	private Location origin;
 	private Color red = new Color(255,0,0);
+	private Color blue = new Color(0,0,255);
+	private List<Segment> prevSegments;
 	
 	public  MapDrawer () {
-		scale = 10;
-		origin = new Location(50,50);
+		// Set to show central Auckland
+		scale = 54;
+		origin = new Location(-5,5);
+		prevSegments = new ArrayList<Segment>();
 	}
 
 	@Override
 	protected void redraw(Graphics g) {
-//		for (Node node : nodeCollection.values()) {
-//			node.setScale(scale);
-//			node.setOrigin(origin);
-//			node.draw(g);		
-//		}
 		if (segmentCollection != null){
 			for (Segment segment : segmentCollection) {
 				segment.setScale(scale);
@@ -35,7 +34,10 @@ public class MapDrawer extends GUI{
 				segment.draw(g);
 			}
 		}
+//		System.out.println(scale);
+//		System.out.println(origin.toString());
 	}
+	
 
 	@Override
 	protected void onClick(MouseEvent e) {
@@ -44,36 +46,48 @@ public class MapDrawer extends GUI{
 
 	@Override
 	protected void onSearch() {
+		if(!prevSegments.isEmpty()){
+			for(Segment seg : prevSegments){
+				seg.setColor(blue);
+			}			
+		}
+		prevSegments = new ArrayList<Segment>();
 		getTextOutputArea().setText("");
 		String searchWord = getSearchBox().getText();
 		List<Integer> results = trie.getWord(searchWord);
-		for(int roadId : results){
-			Road road = roadCollection.get(roadId);
-			List<Segment> segments = road.getSegments();
-			for(Segment seg : segments){
-				seg.setColor(red);
-			}
-			redraw();
-			getTextOutputArea().append(road.getLabel() + " " + road.getCity() + "\n");
-		}
 		
+		if(!results.isEmpty()){
+			for(int roadId : results){
+				Road road = roadCollection.get(roadId);
+				List<Segment> segments = road.getSegments();
+				for(Segment seg : segments){
+					seg.setColor(red);
+					prevSegments.add(seg);
+				}
+				redraw();
+				getTextOutputArea().append(road.getLabel() + " " + road.getCity() + "\n");
+			}
+		}
+		else {
+			getTextOutputArea().setText("Not found");
+		}
 	}
 
 	@Override
 	protected void onMove(Move m) {
 		
 		switch(m){
-			case ZOOM_IN: zoom(2);
+			case ZOOM_IN: zoom(1);
 				break;
-			case ZOOM_OUT: zoom(-2);
+			case ZOOM_OUT: zoom(-1);
 				break;
-			case NORTH: move(0,10);
+			case NORTH: move(0,5);
 				break;
-			case SOUTH: move(0,-10);
+			case SOUTH: move(0,-5);
 				break;
-			case EAST: move(10,0);
+			case EAST: move(5,0);
 				break;
-			case WEST: move(-10,0);
+			case WEST: move(-5,0);
 				break;
 		default:
 			break;

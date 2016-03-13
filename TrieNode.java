@@ -31,14 +31,4 @@ public class TrieNode {
 	public void setRoadId(int roadId) {
 		this.roadId = roadId;
 	}
-	
-	
-	public String toString() {
-		if (this.roadId == 0) {
-			return "Not found";
-		}
-		else {
-			return this.id + " " + this.roadId;
-		}
-	}
 }

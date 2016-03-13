@@ -46,7 +46,6 @@ public class Trie {
 			node = node.getChildren().get(c);
 		}
 		getAll(node, node.getChildren(), results);
-		System.out.println(results);
 		return results;
 
 	}
@@ -61,9 +60,4 @@ public class Trie {
 			}
 		}
 	}
-	
-//	public void main () {
-//		Trie test = new Trie();
-//		test.addWord("help", 12345);	
-//	}
 }

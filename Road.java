@@ -67,30 +67,4 @@ public class Road {
 	public void setOneway(int oneway) {
 		this.oneway = oneway;
 	}
-//	
-//	private static void read(File file) {
-//		String  thisLine = null;
-//	      try{
-//	         BufferedReader br = new BufferedReader(new FileReader(file));
-//	         br.readLine(); //skip first line
-//	         while ((thisLine = br.readLine()) != null) {
-//	        	Road road = new Road (thisLine);
-//	        	System.out.println(road);
-//	         }       
-//	         br.close();
-//	      } catch(Exception e){
-//	         e.printStackTrace();
-//	      }
-//	}
-//	
-//	
-	public String toString() {
-		return this.getLabel() + "      " + this.getCity() + "segments" + this.getSegments();
-	}
-//	
-//	public static void main(String[] args) {
-//		String path = "C:/Users/Anna/Desktop/COMP261/Assign1/261a1_data/data/small/roadID-roadInfo.tab";
-//		File file = new File(path);
-//		read(file);
-//	}
 }

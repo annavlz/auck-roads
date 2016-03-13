@@ -66,13 +66,4 @@ public class Node {
 	public void setInNeighbours(List<Segment> inNeighbours) {
 		this.inNeighbours = inNeighbours;
 	}
-
-	public String toString() {
-		return "NodeId: " + this.id + ", out " + this.outNeighbours.size() + ", in " + this.inNeighbours.size();
-	}
-//	
-//	public static void main(String[] args) {
-//		Node testNode = new Node("10526	-36.871900	174.693080");
-//		System.out.print(testNode);
-//	}
 }
