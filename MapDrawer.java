@@ -5,6 +5,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -50,6 +51,7 @@ public class MapDrawer extends GUI{
 		Point pClick = new Point(e.getX(), e.getY());
 		Location locClick = Location.newFromPoint(pClick, origin, scale);
 		Set<Integer> roadIDs = new HashSet<Integer>();
+		Set<String> roadNames = new HashSet<String>();
 		for(Node node : nodeCollection.values()){
 			if(locClick.isClose(node.getLoc(), 0.1)){
 				List<Segment> inSegments = node.getInNeighbours();
@@ -64,7 +66,12 @@ public class MapDrawer extends GUI{
 		}
 		for(int id : roadIDs){
 			Road road = roadCollection.get(id);
-			getTextOutputArea().append(id + " " + road.getLabel() + " " + road.getCity() + "\n");
+			String name = road.getLabel() + " " + road.getCity();
+			roadNames.add(name);
+			
+		}
+		for(String name : roadNames){
+			getTextOutputArea().append(name + "\n");
 		}
 	}
 	
@@ -81,6 +88,7 @@ public class MapDrawer extends GUI{
 		List<Integer> results = trie.getWord(searchWord);
 		
 		if(!results.isEmpty()){
+			Set<String> roadNames = new HashSet<String>();
 			for(int roadId : results){
 				Road road = roadCollection.get(roadId);
 				List<Segment> segments = road.getSegments();
@@ -89,7 +97,11 @@ public class MapDrawer extends GUI{
 					prevSegments.add(seg);
 				}
 				redraw();
-				getTextOutputArea().append(road.getLabel() + " " + road.getCity() + "\n");
+				roadNames.add(road.getLabel() + " " + road.getCity());
+				
+			}
+			for(String name : roadNames){
+				getTextOutputArea().append(name + "\n");
 			}
 		}
 		else {
