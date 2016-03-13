@@ -64,7 +64,7 @@ public class MapDrawer extends GUI{
 		}
 		for(int id : roadIDs){
 			Road road = roadCollection.get(id);
-			getTextOutputArea().append(road.getLabel() + " " + road.getCity() + "\n");
+			getTextOutputArea().append(id + " " + road.getLabel() + " " + road.getCity() + "\n");
 		}
 	}
 	
