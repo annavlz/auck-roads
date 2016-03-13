@@ -33,7 +33,7 @@ public class Trie {
 				}
 			}			
 		}
-		node.setRoadId(roadId);
+		node.getRoadId().add(roadId);
 
 	}
 	
@@ -61,8 +61,10 @@ public class Trie {
 	}
 	
 	private void getAll ( TrieNode node, Map<Character, TrieNode> children, List<Integer> results) {
-		if (node.getRoadId() > 0){
-			results.add(node.getRoadId());
+		if (!node.getRoadId().isEmpty()){
+			for(int id : node.getRoadId()){
+				results.add(id);
+			}
 		}
 		if(node.getChildren() != null){
 			for (TrieNode child : children.values()){

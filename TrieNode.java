@@ -1,9 +1,11 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class TrieNode {
 	private char id;
 	private Map<Character, TrieNode> children;
-	private int roadId;
+	private List<Integer> roadId;
 	
 	public TrieNode () {
 		this.children = null;
@@ -12,7 +14,7 @@ public class TrieNode {
 	public TrieNode (char letter) {
 		this.id = letter;
 		this.children = null;
-		this.roadId = 0;
+		this.roadId = new ArrayList<Integer>();
 		
 	}
 	
@@ -24,11 +26,11 @@ public class TrieNode {
 		this.children = children;
 	}
 
-	public int getRoadId() {
+	public List<Integer> getRoadId() {
 		return roadId;
 	}
 
-	public void setRoadId(int roadId) {
+	public void setRoadId(List<Integer> roadId) {
 		this.roadId = roadId;
 	}
 }
