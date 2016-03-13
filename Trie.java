@@ -40,14 +40,24 @@ public class Trie {
 	public List<Integer> getWord (String word){
 		node = root;
 		List<Integer> results = new ArrayList<Integer>();
+		boolean found = false;
 		String iWord = word.toLowerCase();
 		char[] chars = iWord.toCharArray();
 		for (char c : chars){
-			node = node.getChildren().get(c);
+			TrieNode tNode = node.getChildren().get(c);
+			if(tNode != null){	
+				node = tNode;
+				found = true;
+			}
+			else {
+				found = false;
+				break;
+			}
 		}
-		getAll(node, node.getChildren(), results);
+		if(found){
+			getAll(node, node.getChildren(), results);
+		}
 		return results;
-
 	}
 	
 	private void getAll ( TrieNode node, Map<Character, TrieNode> children, List<Integer> results) {
