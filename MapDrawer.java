@@ -4,10 +4,7 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,34 +25,36 @@ public class MapDrawer extends GUI{
 		// Set to show central Auckland
 		scale = 54;
 		origin = new Location(-5,5);
-		prevSegments = new ArrayList<Segment>();
+		prevSegments = new ArrayList<Segment>(); 
+		//Create a place to store previous trie search. 
+		//This allows to set only red segments back to blue, and to redraw the whole map.
 	}
 
 	@Override
 	protected void redraw(Graphics g) {
-		if (segmentCollection != null){
+		//Draw lines from segments list.
+		if (segmentCollection != null){//Catches the bug from GUI: redraw is triggered on run, before any load.
 			for (Segment segment : segmentCollection) {
 				segment.setScale(scale);
 				segment.setOrigin(origin);
 				segment.draw(g);
 			}
 		}
-//		System.out.println(scale);
-//		System.out.println(origin.toString());
 	}
 	
-
 	@Override
 	protected void onClick(MouseEvent e) {
-		getTextOutputArea().setText("");
-		Point pClick = new Point(e.getX(), e.getY());
-		Location locClick = Location.newFromPoint(pClick, origin, scale);
+		getTextOutputArea().setText(""); //Clear the outbox.
+		Point pClick = new Point(e.getX(), e.getY()); //Get mouse coordinates.
+		Location locClick = Location.newFromPoint(pClick, origin, scale); //Transform pixels to km.
 		Set<Integer> roadIDs = new HashSet<Integer>();
 		Set<String> roadNames = new HashSet<String>();
-		for(Node node : nodeCollection.values()){
+		//Iterate through nodes and show names on closest in range 100 m.
+		for(Node node : nodeCollection.values()){ 
 			if(locClick.isClose(node.getLoc(), 0.1)){
-				List<Segment> inSegments = node.getInNeighbours();
-				List<Segment> outSegments = node.getOutNeighbours();
+				List<Segment> inSegments = node.getInNeighbours(); //Get incoming segments.
+				List<Segment> outSegments = node.getOutNeighbours(); //Get outgoing segments.
+				//Get road IDs from segments, removing duplicates.
 				for(Segment seg : inSegments){
 					roadIDs.add(seg.getRoadId());
 				}
@@ -64,47 +63,51 @@ public class MapDrawer extends GUI{
 				}
 			}
 		}
+		//Iterate through all unique road id we've got from closets nodes.
 		for(int id : roadIDs){
-			Road road = roadCollection.get(id);
-			String name = road.getLabel() + " " + road.getCity();
-			roadNames.add(name);
+			Road road = roadCollection.get(id); //Find the road.
+			String name = road.getLabel() + " " + road.getCity(); //Get it's name.
+			roadNames.add(name); //Remove duplicates.
 			
 		}
 		for(String name : roadNames){
-			getTextOutputArea().append(name + "\n");
+			getTextOutputArea().append(name + "\n"); //Print to outbox.
 		}
 	}
 	
 	@Override
 	protected void onSearch() {
+		//Redraw previous search result with blue.
 		if(!prevSegments.isEmpty()){
 			for(Segment seg : prevSegments){
 				seg.setColor(blue);
 			}			
 		}
-		prevSegments = new ArrayList<Segment>();
-		getTextOutputArea().setText("");
+		prevSegments = new ArrayList<Segment>(); //Empty previous search.
+		getTextOutputArea().setText(""); //Clear the outbox.
 		String searchWord = getSearchBox().getText();
-		List<Integer> results = trie.getWord(searchWord);
+		List<Integer> results = trie.getWord(searchWord); //Find matching road IDs.
 		
 		if(!results.isEmpty()){
-			Set<String> roadNames = new HashSet<String>();
+			//If something found
+			Set<String> roadNames = new HashSet<String>(); //Names to display.
 			for(int roadId : results){
 				Road road = roadCollection.get(roadId);
-				List<Segment> segments = road.getSegments();
+				List<Segment> segments = road.getSegments(); //Find segments of the road.
 				for(Segment seg : segments){
-					seg.setColor(red);
-					prevSegments.add(seg);
+					seg.setColor(red); //Set them red.
+					prevSegments.add(seg); //Memorize them.
 				}
-				redraw();
-				roadNames.add(road.getLabel() + " " + road.getCity());
+				roadNames.add(road.getLabel() + " " + road.getCity()); //Add the name to the set for display.
 				
 			}
+			redraw();
 			for(String name : roadNames){
-				getTextOutputArea().append(name + "\n");
+				getTextOutputArea().append(name + "\n"); //Print names
 			}
 		}
 		else {
+			//If not found
 			getTextOutputArea().setText("Not found");
 		}
 	}
@@ -141,9 +144,9 @@ public class MapDrawer extends GUI{
 
 	@Override
 	protected void onLoad(File nodesFile, File roadsFile, File segmentsFile, File polygons) {
-		 nodeCollection = new NodeCollection().getNodes(nodesFile);
-		 roadCollection = new RoadCollection().getRoads(roadsFile);
-		 segmentCollection = new SegmentCollection().getSegments(segmentsFile);
+		 nodeCollection = new NodeCollection().getNodes(nodesFile); //Read nodes from file.
+		 roadCollection = new RoadCollection().getRoads(roadsFile); //Read roads from file.
+		 segmentCollection = new SegmentCollection().getSegments(segmentsFile); //Read segments from file.
 		 redraw();
 		 setupCollections();
 		 setupTrie();
@@ -151,7 +154,8 @@ public class MapDrawer extends GUI{
 
 
 	private void setupCollections() {
-		for (Segment segment : segmentCollection) {
+		//Iterate through the segments and add all data to the data structures.
+		for (Segment segment : segmentCollection) { 
 			int roadId = segment.getRoadId();
 			int startNodeId = segment.getNode1Id();
 			int endNodeId = segment.getNode2Id();
@@ -164,7 +168,7 @@ public class MapDrawer extends GUI{
 			road.getSegments().add(segment);
 			startNode.getOutNeighbours().add(segment);
 			endNode.getInNeighbours().add(segment);
-			if(road.getOneway() == 0){
+			if(road.getOneway() == 0){ //Checks if road is 2way and doubles segments.
 				endNode.getOutNeighbours().add(segment);
 				startNode.getInNeighbours().add(segment);
 			}
@@ -173,10 +177,10 @@ public class MapDrawer extends GUI{
 	
 	private void setupTrie() {
 		trie = new Trie();
-		for (Road road : roadCollection.values()) {
-			String name = road.getLabel() + " " + road.getCity();
-			int roadId = road.getId();
-			trie.addWord(name, roadId);
+		for (Road road : roadCollection.values()) { //Iterate through all roads
+			String name = road.getLabel() + " " + road.getCity(); //Get their names
+			int roadId = road.getId(); //take values
+			trie.addWord(name, roadId); //and add to the trie.
 		}
 	}
 	

@@ -15,6 +15,7 @@ public class Road {
 	private List<Segment> segments = new ArrayList<Segment>();
 	
 	public Road (String input) {
+		//Creates a road object from a file line
 		String [] parts = input.split("\\t+");
 			this.setId(Integer.parseInt(parts[0]));
 			type = (Integer.parseInt(parts[1]));

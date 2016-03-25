@@ -8,13 +8,15 @@ public class TrieNode {
 	private List<Integer> roadId;
 	
 	public TrieNode () {
-		this.children = null;
+		this.children = null; //root
 	}
 	
 	public TrieNode (char letter) {
-		this.id = letter;
+		this.id = letter; //index
 		this.children = null;
-		this.roadId = new ArrayList<Integer>();
+		this.roadId = new ArrayList<Integer>(); 
+		//value; as there can be a few segments making one road 
+		//(with the same name, but different roadIDs), it's a list
 		
 	}
 	

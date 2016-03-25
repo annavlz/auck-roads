@@ -19,6 +19,7 @@ public class NodeCollection {
 	}
 
 	private void read(File file) {
+		//Reads file and creates a hashmap of nodes
 		String  thisLine = null;
 	      try{
 	         BufferedReader br = new BufferedReader(new FileReader(file));

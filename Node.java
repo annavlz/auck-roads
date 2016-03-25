@@ -1,38 +1,20 @@
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Node {
 	private int id;
 	private Location loc;
-	private int scale;
-	private Location origin;
 	private List<Segment> outNeighbours = new ArrayList<Segment>(2);
 	private List<Segment> inNeighbours = new ArrayList<Segment>(2);
 	
 	public Node (String input){
+		//Create node from a file line
 		String [] parts = input.split("\\s+");
 
 		this.setId(Integer.parseInt(parts[0]));
 		double lat = Double.parseDouble(parts[1]);
 		double lon = Double.parseDouble(parts[2]);
-		this.setLoc(Location.newFromLatLon(lat, lon));
-	}
-	
-	public void setScale(int scale) {
-		this.scale = scale;
-	}
-	
-	public void setOrigin(Location origin) {
-		this.origin = origin;
-	}
-	
-	public void draw(Graphics g) {
-		Point nodeLoc = getLoc().asPoint(origin, scale);
-		g.setColor(new Color(  0,   0, 255));
-		g.fillRect(nodeLoc.x, nodeLoc.y, 2, 2);
+		this.setLoc(Location.newFromLatLon(lat, lon)); //Transform degrees to kms.
 	}
 
 	public int getId() {
