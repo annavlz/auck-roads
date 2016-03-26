@@ -4,9 +4,13 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Set;
 
 
@@ -20,6 +24,8 @@ public class MapDrawer extends GUI{
 	private Color red = new Color(255,0,0);
 	private Color blue = new Color(0,0,255);
 	private List<Segment> prevSegments;
+	private String mode = "search";
+	private List<Node> routePoints = new ArrayList<Node>(); 
 	
 	public  MapDrawer () {
 		// Set to show central Auckland
@@ -30,6 +36,19 @@ public class MapDrawer extends GUI{
 		//This allows to set only red segments back to blue, and to redraw the whole map.
 	}
 
+	@Override
+	protected void findPath() {
+		mode = "route";
+		getTextOutputArea().setText("Choose your starting point first and then you destination point.\n");
+		
+	}
+
+	@Override
+	protected void findCriticalPoints() {
+		getTextOutputArea().setText("Critical points.");
+		
+	}
+	
 	@Override
 	protected void redraw(Graphics g) {
 		//Draw lines from segments list.
@@ -47,31 +66,56 @@ public class MapDrawer extends GUI{
 		getTextOutputArea().setText(""); //Clear the outbox.
 		Point pClick = new Point(e.getX(), e.getY()); //Get mouse coordinates.
 		Location locClick = Location.newFromPoint(pClick, origin, scale); //Transform pixels to km.
-		Set<Integer> roadIDs = new HashSet<Integer>();
-		Set<String> roadNames = new HashSet<String>();
-		//Iterate through nodes and show names on closest in range 100 m.
-		for(Node node : nodeCollection.values()){ 
-			if(locClick.isClose(node.getLoc(), 0.1)){
-				List<Segment> inSegments = node.getInNeighbours(); //Get incoming segments.
-				List<Segment> outSegments = node.getOutNeighbours(); //Get outgoing segments.
-				//Get road IDs from segments, removing duplicates.
-				for(Segment seg : inSegments){
-					roadIDs.add(seg.getRoadId());
+		
+		switch(mode){
+			case "search":
+				Set<Integer> roadIDs = new HashSet<Integer>();
+				Set<String> roadNames = new HashSet<String>();
+				//Iterate through nodes and show names on closest in range 100 m.
+				for(Node node : nodeCollection.values()){ 
+					if(locClick.isClose(node.getLoc(), 0.1)){
+						List<Segment> inSegments = node.getInNeighbours(); //Get incoming segments.
+						List<Segment> outSegments = node.getOutNeighbours(); //Get outgoing segments.
+						//Get road IDs from segments, removing duplicates.
+						for(Segment seg : inSegments){
+							roadIDs.add(seg.getRoadId());
+						}
+						for(Segment seg : outSegments){
+							roadIDs.add(seg.getRoadId());
+						}
+					}
 				}
-				for(Segment seg : outSegments){
-					roadIDs.add(seg.getRoadId());
+				//Iterate through all unique road id we've got from closets nodes.
+				for(int id : roadIDs){
+					Road road = roadCollection.get(id); //Find the road.
+					String name = road.getLabel() + " " + road.getCity(); //Get it's name.
+					roadNames.add(name); //Remove duplicates.
+					
 				}
-			}
-		}
-		//Iterate through all unique road id we've got from closets nodes.
-		for(int id : roadIDs){
-			Road road = roadCollection.get(id); //Find the road.
-			String name = road.getLabel() + " " + road.getCity(); //Get it's name.
-			roadNames.add(name); //Remove duplicates.
-			
-		}
-		for(String name : roadNames){
-			getTextOutputArea().append(name + "\n"); //Print to outbox.
+				for(String name : roadNames){
+					getTextOutputArea().append(name + "\n"); //Print to outbox.
+				}
+				break;
+			case "route":
+				PriorityQueue<Tuple> closeNodes = new PriorityQueue<Tuple>();
+				for(Node node : nodeCollection.values()){ 
+					if(locClick.isClose(node.getLoc(), 0.1)){
+						closeNodes.add(new Tuple(locClick.distance(node.getLoc()), node));
+					}
+				}
+				
+				if(routePoints.size() == 0){
+					Node start = closeNodes.poll().node;
+					routePoints.add(start);
+					getTextOutputArea().append("Your route from " + start.getId());
+				}
+				if(routePoints.size() == 1){
+					Node finish = closeNodes.poll().node;
+					routePoints.add(finish);
+					getTextOutputArea().append(" to " + finish.getId() + " is:");
+					findThePath();
+					routePoints = new ArrayList<Node>(); 
+				}
 		}
 	}
 	
@@ -152,7 +196,11 @@ public class MapDrawer extends GUI{
 		 setupTrie();
 	}
 
-
+	private void findThePath() {
+		mode = "search";
+//		getTextOutputArea().setText("Your root from ";
+	}
+	
 	private void setupCollections() {
 		//Iterate through the segments and add all data to the data structures.
 		for (Segment segment : segmentCollection) { 

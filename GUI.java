@@ -75,6 +75,10 @@ public abstract class GUI {
 	 * Move enum is passed, representing the button clicked by the user.
 	 */
 	protected abstract void onMove(Move m);
+	
+	protected abstract void findPath();
+	
+	protected abstract void findCriticalPoints();
 
 	/**
 	 * Is called when the user has successfully selected a directory to load the
@@ -280,6 +284,21 @@ public abstract class GUI {
 				redraw();
 			}
 		});
+		
+		JButton route = new JButton("Find route");
+		route.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ev) {
+				findPath();
+			}
+		});
+		
+		JButton critical = new JButton("Critical points");
+		critical.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ev) {
+				findCriticalPoints();
+				redraw();
+			}
+		});
 
 		// next, make the search box at the top-right. we manually fix
 		// it's size, and add an action listener to call your code when
@@ -334,6 +353,17 @@ public abstract class GUI {
 		loadquit.add(load);
 		loadquit.add(quit);
 		controls.add(loadquit);
+		// rigid areas are invisible components that can be used to space
+		// components out.
+		controls.add(Box.createRigidArea(new Dimension(15, 0)));
+		JPanel extra = new JPanel();
+		extra.setLayout(new GridLayout(2, 1));
+		// manually set a fixed size for the panel containing the load and quit
+		// buttons (doesn't change with window resize).
+		extra.setMaximumSize(new Dimension(50, 100));
+		extra.add(route);
+		extra.add(critical);
+		controls.add(extra);
 		// rigid areas are invisible components that can be used to space
 		// components out.
 		controls.add(Box.createRigidArea(new Dimension(15, 0)));
