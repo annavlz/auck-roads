@@ -4,8 +4,12 @@ import java.util.List;
 public class Node {
 	private int id;
 	private Location loc;
+	private Boolean visited;
+	private Node pathFrom;
 	private List<Segment> outNeighbours = new ArrayList<Segment>(2);
 	private List<Segment> inNeighbours = new ArrayList<Segment>(2);
+	private double cost;
+	private Segment pathSegment;
 	
 	public Node (String input){
 		//Create node from a file line
@@ -47,5 +51,37 @@ public class Node {
 
 	public void setInNeighbours(List<Segment> inNeighbours) {
 		this.inNeighbours = inNeighbours;
+	}
+
+	public Boolean getVisited() {
+		return visited;
+	}
+
+	public void setVisited(Boolean visited) {
+		this.visited = visited;
+	}
+
+	public Node getPathFrom() {
+		return pathFrom;
+	}
+
+	public void setPathFrom(Node pathFrom) {
+		this.pathFrom = pathFrom;
+	}
+
+	public double getCost() {
+		return cost;
+	}
+
+	public void setCost(double cost) {
+		this.cost = cost;
+	}
+
+	public Segment getPathSegment() {
+		return pathSegment;
+	}
+
+	public void setPathSegment(Segment pathSegment) {
+		this.pathSegment = pathSegment;
 	}
 }

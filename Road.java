@@ -52,6 +52,8 @@ public class Road {
 	public void setCity(String city) {
 		this.city = city;
 	}
+	
+	
 
 	public List<Segment> getSegments() {
 		return segments;

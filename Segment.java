@@ -7,16 +7,13 @@ import java.util.List;
 public class Segment {
 	private final int roadId;
 	private final double length;
-	private final int node1Id;
-	private final int node2Id;
+	private final int startNodeId;
+	private final int endNodeId;
 	private List<Location> locations;
-	private int scale; 
-	private Location origin;
 	private Road road;
 	private Node startNode;
 	private Node endNode;
 	private Color color;
-	private Color blue = new Color(0,0,255);
 
 	
 	public Segment (String input){
@@ -25,8 +22,8 @@ public class Segment {
 
 		roadId = Integer.parseInt(parts[0]);
 		length = Double.parseDouble(parts[1]);
-		node1Id = Integer.parseInt(parts[2]); //start node
-		node2Id = Integer.parseInt(parts[3]); //end node
+		startNodeId = Integer.parseInt(parts[2]); //start node
+		endNodeId = Integer.parseInt(parts[3]); //end node
 		locations = new ArrayList<Location>(); //coordinates for curves
 		for (int i = 4; i < parts.length; i+=2){
 			double lat = Double.parseDouble(parts[i]);
@@ -34,18 +31,10 @@ public class Segment {
 			Location tempLoc = Location.newFromLatLon(lat, lon);
 			locations.add(tempLoc);
 		}
-		setColor(blue); //make the map blue
+		setColor(new Color(0,0,255)); //make the map blue
 	}
 	
-	public void setScale(int scale) {
-		this.scale = scale;
-	}
-	
-	public void setOrigin(Location origin) {
-		this.origin = origin;
-	}
-	
-	public void draw(Graphics g) {
+	public void draw(Graphics g, int scale, Location origin) {
 		g.setColor(getColor());
 		for(int i = 0; i < locations.size()-1; i++){
 			Point p1 = locations.get(i).asPoint(origin, scale);
@@ -67,11 +56,11 @@ public class Segment {
 	}
 
 	public int getNode1Id() {
-		return node1Id;
+		return startNodeId;
 	}
 
 	public int getNode2Id() {
-		return node2Id;
+		return endNodeId;
 	}
 
 	public Node getStartNode() {

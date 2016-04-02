@@ -15,17 +15,20 @@ import java.util.Set;
 
 
 public class MapDrawer extends GUI{
-	private Map<Integer, Node> nodeCollection;
-	private Map<Integer, Road> roadCollection;
+	private NodeCollection nodeCollection;
+	private RoadCollection roadCollection;
 	private List<Segment> segmentCollection;
 	private Trie trie;
 	private int scale;
 	private Location origin;
-	private Color red = new Color(255,0,0);
-	private Color blue = new Color(0,0,255);
 	private List<Segment> prevSegments;
 	private String mode = "search";
-	private List<Node> routePoints = new ArrayList<Node>(); 
+	private List<Node> routePoints; 
+	
+	private final Color RED = new Color(255,0,0);
+	private final Color BLUE = new Color(0,0,255);
+
+	
 	
 	public  MapDrawer () {
 		// Set to show central Auckland
@@ -39,6 +42,7 @@ public class MapDrawer extends GUI{
 	@Override
 	protected void findPath() {
 		mode = "route";
+		routePoints = new ArrayList<Node>(); 
 		getTextOutputArea().setText("Choose your starting point first and then you destination point.\n");
 		
 	}
@@ -54,9 +58,7 @@ public class MapDrawer extends GUI{
 		//Draw lines from segments list.
 		if (segmentCollection != null){//Catches the bug from GUI: redraw is triggered on run, before any load.
 			for (Segment segment : segmentCollection) {
-				segment.setScale(scale);
-				segment.setOrigin(origin);
-				segment.draw(g);
+				segment.draw(g, scale, origin);
 			}
 		}
 	}
@@ -69,53 +71,39 @@ public class MapDrawer extends GUI{
 		
 		switch(mode){
 			case "search":
-				Set<Integer> roadIDs = new HashSet<Integer>();
-				Set<String> roadNames = new HashSet<String>();
-				//Iterate through nodes and show names on closest in range 100 m.
-				for(Node node : nodeCollection.values()){ 
-					if(locClick.isClose(node.getLoc(), 0.1)){
-						List<Segment> inSegments = node.getInNeighbours(); //Get incoming segments.
-						List<Segment> outSegments = node.getOutNeighbours(); //Get outgoing segments.
-						//Get road IDs from segments, removing duplicates.
-						for(Segment seg : inSegments){
-							roadIDs.add(seg.getRoadId());
-						}
-						for(Segment seg : outSegments){
-							roadIDs.add(seg.getRoadId());
-						}
-					}
-				}
-				//Iterate through all unique road id we've got from closets nodes.
-				for(int id : roadIDs){
-					Road road = roadCollection.get(id); //Find the road.
-					String name = road.getLabel() + " " + road.getCity(); //Get it's name.
-					roadNames.add(name); //Remove duplicates.
-					
-				}
-				for(String name : roadNames){
-					getTextOutputArea().append(name + "\n"); //Print to outbox.
-				}
+				search(locClick);
 				break;
 			case "route":
-				PriorityQueue<Tuple> closeNodes = new PriorityQueue<Tuple>();
-				for(Node node : nodeCollection.values()){ 
-					if(locClick.isClose(node.getLoc(), 0.1)){
-						closeNodes.add(new Tuple(locClick.distance(node.getLoc()), node));
-					}
-				}
-				
-				if(routePoints.size() == 0){
-					Node start = closeNodes.poll().node;
-					routePoints.add(start);
-					getTextOutputArea().append("Your route from " + start.getId());
-				}
-				if(routePoints.size() == 1){
-					Node finish = closeNodes.poll().node;
-					routePoints.add(finish);
-					getTextOutputArea().append(" to " + finish.getId() + " is:");
-					findThePath();
-					routePoints = new ArrayList<Node>(); 
-				}
+				route(locClick);
+				break;
+		}
+	}
+	
+	private void search (Location locClick) {
+		Set<Integer> roadIDs = nodeCollection.getNodeRoadsIDs(locClick);
+		Set<String> roadNames = roadCollection.getRoadNames(roadIDs);		
+		for(String name : roadNames){
+			getTextOutputArea().append(name + "\n"); //Print to outbox.
+		}
+	}
+	
+	private void route (Location locClick) {
+		PriorityQueue<Tuple> closeNodes = nodeCollection.getCloseNodes(locClick);
+		
+		if(routePoints.size() == 0){
+			Node start = closeNodes.poll().node;
+			routePoints.add(start);
+			getTextOutputArea().append("Your route from " + start.getId());
+		}
+		else if (routePoints.size() == 1){
+			Node finish = closeNodes.poll().node;
+			routePoints.add(finish);
+			getTextOutputArea().append("Your route from " + routePoints.get(0).getId() + " to " + routePoints.get(0).getId());
+			getTextOutputArea().append("\nClick to confirm.");
+		}
+		else {
+			getTextOutputArea().append("Searching");
+			findThePath();
 		}
 	}
 	
@@ -124,7 +112,7 @@ public class MapDrawer extends GUI{
 		//Redraw previous search result with blue.
 		if(!prevSegments.isEmpty()){
 			for(Segment seg : prevSegments){
-				seg.setColor(blue);
+				seg.setColor(BLUE);
 			}			
 		}
 		prevSegments = new ArrayList<Segment>(); //Empty previous search.
@@ -139,7 +127,7 @@ public class MapDrawer extends GUI{
 				Road road = roadCollection.get(roadId);
 				List<Segment> segments = road.getSegments(); //Find segments of the road.
 				for(Segment seg : segments){
-					seg.setColor(red); //Set them red.
+					seg.setColor(RED); //Set them red.
 					prevSegments.add(seg); //Memorize them.
 				}
 				roadNames.add(road.getLabel() + " " + road.getCity()); //Add the name to the set for display.
@@ -188,16 +176,23 @@ public class MapDrawer extends GUI{
 
 	@Override
 	protected void onLoad(File nodesFile, File roadsFile, File segmentsFile, File polygons) {
-		 nodeCollection = new NodeCollection().getNodes(nodesFile); //Read nodes from file.
-		 roadCollection = new RoadCollection().getRoads(roadsFile); //Read roads from file.
+		 nodeCollection = new NodeCollection(nodesFile); //Read nodes from file.
+		 roadCollection = new RoadCollection(roadsFile); //Read roads from file.
 		 segmentCollection = new SegmentCollection().getSegments(segmentsFile); //Read segments from file.
 		 redraw();
 		 setupCollections();
-		 setupTrie();
+		 trie = roadCollection.createTrie();
 	}
 
 	private void findThePath() {
 		mode = "search";
+		Node start = routePoints.get(0);
+		Node finish = routePoints.get(1);
+		List<Node> routeNodes = nodeCollection.findShortestPath(start, finish);
+//		for(Segment seg : segments){
+//			seg.setColor(red); //Set them red.
+//		}
+		redraw();
 //		getTextOutputArea().setText("Your root from ";
 	}
 	
@@ -216,19 +211,10 @@ public class MapDrawer extends GUI{
 			road.getSegments().add(segment);
 			startNode.getOutNeighbours().add(segment);
 			endNode.getInNeighbours().add(segment);
-			if(road.getOneway() == 0){ //Checks if road is 2way and doubles segments.
+			if (road.getOneway() == 0){ //Checks if road is 2way and doubles segments.
 				endNode.getOutNeighbours().add(segment);
 				startNode.getInNeighbours().add(segment);
 			}
-		}
-	}
-	
-	private void setupTrie() {
-		trie = new Trie();
-		for (Road road : roadCollection.values()) { //Iterate through all roads
-			String name = road.getLabel() + " " + road.getCity(); //Get their names
-			int roadId = road.getId(); //take values
-			trie.addWord(name, roadId); //and add to the trie.
 		}
 	}
 	
