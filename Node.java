@@ -8,7 +8,6 @@ public class Node {
 	private Node pathFrom;
 	private List<Segment> outNeighbours = new ArrayList<Segment>(2);
 	private List<Segment> inNeighbours = new ArrayList<Segment>(2);
-	private double cost;
 	private Segment pathSegment;
 	
 	public Node (String input){
@@ -67,14 +66,6 @@ public class Node {
 
 	public void setPathFrom(Node pathFrom) {
 		this.pathFrom = pathFrom;
-	}
-
-	public double getCost() {
-		return cost;
-	}
-
-	public void setCost(double cost) {
-		this.cost = cost;
 	}
 
 	public Segment getPathSegment() {

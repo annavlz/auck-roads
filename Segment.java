@@ -42,7 +42,7 @@ public class Segment {
 			g.drawLine(p1.x, p1.y, p2.x, p2.y);
 		}
 	}
-
+	
 	public int getRoadId() {
 		return roadId;
 	}
@@ -85,6 +85,9 @@ public class Segment {
 
 	public void setColor(Color color) {
 		this.color = color;
+	}
+	public double getLength(){
+		return this.length;
 	}
 }
 

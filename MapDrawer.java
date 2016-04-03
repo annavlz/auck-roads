@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
+import java.util.Stack;
 
 
 public class MapDrawer extends GUI{
@@ -65,6 +66,14 @@ public class MapDrawer extends GUI{
 	
 	@Override
 	protected void onClick(MouseEvent e) {
+		//Redraw previous search result with blue.
+		if(!prevSegments.isEmpty()){
+			for(Segment seg : prevSegments){
+				seg.setColor(BLUE);
+			}			
+		}
+		prevSegments = new ArrayList<Segment>(); //Empty previous search.
+		
 		getTextOutputArea().setText(""); //Clear the outbox.
 		Point pClick = new Point(e.getX(), e.getY()); //Get mouse coordinates.
 		Location locClick = Location.newFromPoint(pClick, origin, scale); //Transform pixels to km.
@@ -89,7 +98,6 @@ public class MapDrawer extends GUI{
 	
 	private void route (Location locClick) {
 		PriorityQueue<Tuple> closeNodes = nodeCollection.getCloseNodes(locClick);
-		
 		if(routePoints.size() == 0){
 			Node start = closeNodes.poll().node;
 			routePoints.add(start);
@@ -98,7 +106,7 @@ public class MapDrawer extends GUI{
 		else if (routePoints.size() == 1){
 			Node finish = closeNodes.poll().node;
 			routePoints.add(finish);
-			getTextOutputArea().append("Your route from " + routePoints.get(0).getId() + " to " + routePoints.get(0).getId());
+			getTextOutputArea().append("Your route from " + routePoints.get(0).getId() + " to " + routePoints.get(1).getId());
 			getTextOutputArea().append("\nClick to confirm.");
 		}
 		else {
@@ -188,12 +196,22 @@ public class MapDrawer extends GUI{
 		mode = "search";
 		Node start = routePoints.get(0);
 		Node finish = routePoints.get(1);
-		List<Node> routeNodes = nodeCollection.findShortestPath(start, finish);
-//		for(Segment seg : segments){
-//			seg.setColor(red); //Set them red.
-//		}
+		nodeCollection.findShortestPath(start, finish);
+		Stack<Segment> route = nodeCollection.getThePath(finish);	
+		System.out.println(route);
+		String roads = "";
+		Double totalLength = 0.0;
+		while(!route.isEmpty()){
+			Segment seg = route.pop();
+			seg.setColor(RED); //Set them red.
+			prevSegments.add(seg); //Memorize them.
+			totalLength += seg.getLength();
+			Road road = roadCollection.get(seg.getRoadId());
+			roads += road.getLabel() + ", " + road.getCity() + ", " + Integer.toString((int) Math.round(seg.getLength() * 1000)) + "m.\n";
+		}
 		redraw();
-//		getTextOutputArea().setText("Your root from ";
+		getTextOutputArea().setText(roads);
+		getTextOutputArea().append("Total distance: " + Math.round(totalLength) +"km.");
 	}
 	
 	private void setupCollections() {
