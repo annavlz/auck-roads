@@ -198,7 +198,6 @@ public class MapDrawer extends GUI{
 		Node finish = routePoints.get(1);
 		nodeCollection.findShortestPath(start, finish);
 		Stack<Segment> route = nodeCollection.getThePath(finish);	
-		System.out.println(route);
 		String roads = "";
 		Double totalLength = 0.0;
 		while(!route.isEmpty()){

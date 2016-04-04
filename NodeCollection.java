@@ -92,7 +92,6 @@ public class NodeCollection {
 			ShortPathQueueItem qItem = pQueue.poll();		
 			Node curNode = qItem.curNode;
 			if (!curNode.getVisited()) {
-
 				curNode.setVisited(true);
 				curNode.setPathFrom(qItem.prevNode);
 				curNode.setPathSegment(qItem.segment);
@@ -126,8 +125,8 @@ public class NodeCollection {
 		return route;
 	}
 	
-	
-	private void goToNode (Node node, Stack<Segment> route){
+
+	public void goToNode (Node node, Stack<Segment> route){
 		route.push(node.getPathSegment());
 		if (node.getPathFrom() != null){
 			goToNode(node.getPathFrom(), route);
