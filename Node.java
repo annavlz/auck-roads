@@ -1,5 +1,7 @@
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Node {
 	private int id;
@@ -9,6 +11,7 @@ public class Node {
 	private List<Segment> outNeighbours = new ArrayList<Segment>(2);
 	private List<Segment> inNeighbours = new ArrayList<Segment>(2);
 	private Segment pathSegment;
+	private int depth;
 	
 	public Node (String input){
 		//Create node from a file line
@@ -18,6 +21,17 @@ public class Node {
 		double lat = Double.parseDouble(parts[1]);
 		double lon = Double.parseDouble(parts[2]);
 		this.setLoc(Location.newFromLatLon(lat, lon)); //Transform degrees to kms.
+	}
+	
+	public Set<Node> getNeighbours() {
+		Set<Node> neighbours = new HashSet<Node>();
+		for(Segment seg : outNeighbours){
+			neighbours.add(seg.getEndNode());
+		}
+		for(Segment seg : inNeighbours){
+			neighbours.add(seg.getStartNode());
+		}
+		return neighbours;
 	}
 
 	public int getId() {
@@ -74,5 +88,13 @@ public class Node {
 
 	public void setPathSegment(Segment pathSegment) {
 		this.pathSegment = pathSegment;
+	}
+
+	public void setDepth(int depth) {
+		this.depth = depth;	
+	}
+	
+	public int getDepth() {
+		return this.depth;
 	}
 }

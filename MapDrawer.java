@@ -50,8 +50,8 @@ public class MapDrawer extends GUI{
 
 	@Override
 	protected void findCriticalPoints() {
-		getTextOutputArea().setText("Critical points.");
-		
+		nodeCollection.findCriticalPoints();
+		getTextOutputArea().setText("Critical points.");	
 	}
 	
 	@Override

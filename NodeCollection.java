@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
@@ -132,4 +133,62 @@ public class NodeCollection {
 			goToNode(node.getPathFrom(), route);
 		}
 	}
+
+	public List<Node> findCriticalPoints() {
+		for(Node node : nodes.values()){
+			node.setDepth(Integer.MAX_VALUE);
+		}
+		List<Node> artPoints = new ArrayList<Node>();
+
+		Node startNode = nodes.get(15184);
+		startNode.setDepth(0);
+		int numSubtrees = 0;
+		for(Node neighbour : startNode.getNeighbours()){
+			if(neighbour.getDepth() == Integer.MAX_VALUE){
+				iterateArtPoints(neighbour,startNode, artPoints);
+				numSubtrees ++;
+			}
+		}
+		if(numSubtrees > 0){
+			artPoints.add(startNode);
+		}
+		return artPoints;
+	}
+	private void iterateArtPoints(Node firstNode, Node root, List<Node> artPoints){
+		Stack<ArtPointsItem> stackAtWork = new Stack<ArtPointsItem>();
+		stackAtWork.add(new ArtPointsItem(firstNode, 1, root, 0, null));
+		while(!stackAtWork.empty()){
+			ArtPointsItem stackItem = stackAtWork.peek();
+			Node node = stackItem.curNode;
+			if(stackItem.children == null){
+				node.setDepth(stackItem.depth);
+				stackItem.reachBack = stackItem.depth;
+				stackItem.children = new LinkedList<Node>();
+				for(Node neighbour : node.getNeighbours()){
+					if(neighbour != stackItem.parent){
+						stackItem.children.add(neighbour);		
+					}
+				}
+			}
+			else if(stackItem.children.size() > 0){
+				Node child = stackItem.children.poll();
+				if(child.getDepth() < Integer.MAX_VALUE){
+					stackItem.reachBack = Math.min(stackItem.reachBack, child.getDepth());
+				}
+				else {
+					stackAtWork.add(new ArtPointsItem(child, node.getDepth()+1, node, 0, null));
+				}
+			}
+			else {
+				if(firstNode != node){
+					if(stackItem.reachBack >= stackItem.parent.getDepth()){
+						artPoints.add(stackItem.parent);
+					}
+					stackItem.parent.setDepth(Math.min(stackItem.parent.getDepth(), stackItem.reachBack));
+				}
+				stackAtWork.pop();
+			}
+		}
+	}
+
 }
