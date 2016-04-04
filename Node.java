@@ -1,3 +1,6 @@
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -96,5 +99,11 @@ public class Node {
 	
 	public int getDepth() {
 		return this.depth;
+	}
+
+	public void draw(Graphics g, int scale, Location origin) {
+		g.setColor(new Color(255,0,0));
+		Point p1 = loc.asPoint(origin, scale);
+		g.drawRect(p1.x, p1.y, 2, 2);	
 	}
 }

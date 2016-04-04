@@ -25,6 +25,7 @@ public class MapDrawer extends GUI{
 	private List<Segment> prevSegments;
 	private String mode = "search";
 	private List<Node> routePoints; 
+	private List<Node> artPoints;
 	
 	private final Color RED = new Color(255,0,0);
 	private final Color BLUE = new Color(0,0,255);
@@ -50,7 +51,7 @@ public class MapDrawer extends GUI{
 
 	@Override
 	protected void findCriticalPoints() {
-		nodeCollection.findCriticalPoints();
+		artPoints = nodeCollection.findCriticalPoints();
 		getTextOutputArea().setText("Critical points.");	
 	}
 	
@@ -60,6 +61,11 @@ public class MapDrawer extends GUI{
 		if (segmentCollection != null){//Catches the bug from GUI: redraw is triggered on run, before any load.
 			for (Segment segment : segmentCollection) {
 				segment.draw(g, scale, origin);
+			}
+		}
+		if (artPoints != null){
+			for (Node node : artPoints){
+				node.draw(g, scale, origin);
 			}
 		}
 	}
@@ -73,6 +79,7 @@ public class MapDrawer extends GUI{
 			}			
 		}
 		prevSegments = new ArrayList<Segment>(); //Empty previous search.
+		artPoints = null;
 		
 		getTextOutputArea().setText(""); //Clear the outbox.
 		Point pClick = new Point(e.getX(), e.getY()); //Get mouse coordinates.
