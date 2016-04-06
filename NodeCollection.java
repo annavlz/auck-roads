@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -140,29 +141,37 @@ public class NodeCollection {
 		}
 		List<Node> artPoints = new ArrayList<Node>();
 
-		Node startNode = nodes.get(15184);
+		Node startNode = nodes.get(13812);
 		startNode.setDepth(0);
-		int numSubtrees = 0;
 		for(Node neighbour : startNode.getNeighbours()){
 			if(neighbour.getDepth() == Integer.MAX_VALUE){
-				iterateArtPoints(neighbour,startNode, artPoints);
-				numSubtrees ++;
+				iterateArtPoints(neighbour, startNode, artPoints);
 			}
 		}
-		if(numSubtrees > 0){
-			artPoints.add(startNode);
-		}
+//		for (Node point : artPoints){
+//			System.out.println(point.getId());
+//		}
+		System.out.println(artPoints.size());
 		return artPoints;
 	}
 	private void iterateArtPoints(Node firstNode, Node root, List<Node> artPoints){
 		Stack<ArtPointsItem> stackAtWork = new Stack<ArtPointsItem>();
-		stackAtWork.add(new ArtPointsItem(firstNode, 1, root, 0, null));
+		stackAtWork.add(new ArtPointsItem(firstNode, 0, root, 1, null));
+
 		while(!stackAtWork.empty()){
 			ArtPointsItem stackItem = stackAtWork.peek();
+//			System.out.println("stackItem");
+//			System.out.println(stackItem.curNode.getId());
+//			System.out.println(stackItem.reachBack);
+//			System.out.println(stackItem.parent.getId());
+//			System.out.println(stackItem.depth);
+
+				
 			Node node = stackItem.curNode;
 			if(stackItem.children == null){
 				node.setDepth(stackItem.depth);
-				stackItem.reachBack = stackItem.depth;
+//				stackItem.reachBack = stackItem.depth;
+				node.setReachBack(stackItem.depth);
 				stackItem.children = new LinkedList<Node>();
 				for(Node neighbour : node.getNeighbours()){
 					if(neighbour != stackItem.parent){
@@ -171,20 +180,28 @@ public class NodeCollection {
 				}
 			}
 			else if(stackItem.children.size() > 0){
+//				System.out.println("children");
+//				for(Node child : stackItem.children){
+//					System.out.println(child.getId());
+//				}
 				Node child = stackItem.children.poll();
 				if(child.getDepth() < Integer.MAX_VALUE){
-					stackItem.reachBack = Math.min(stackItem.reachBack, child.getDepth());
+					stackItem.reachBack = Math.min(node.getReachBack(), child.getDepth());
+					node.setReachBack(stackItem.reachBack);
 				}
 				else {
-					stackAtWork.add(new ArtPointsItem(child, node.getDepth()+1, node, 0, null));
+					stackAtWork.add(new ArtPointsItem(child, 0, node, node.getDepth()+1, null));
 				}
 			}
 			else {
 				if(firstNode != node){
-					if(stackItem.reachBack >= stackItem.parent.getDepth()){
+					if(node.getReachBack() >= stackItem.parent.getDepth()){
+//						System.out.println("adding");
 						artPoints.add(stackItem.parent);
 					}
-					stackItem.parent.setDepth(Math.min(stackItem.parent.getDepth(), stackItem.reachBack));
+//					System.out.println("removing");
+	
+					stackItem.parent.setReachBack(Math.min(stackItem.parent.getReachBack(), node.getReachBack()));
 				}
 				stackAtWork.pop();
 			}
