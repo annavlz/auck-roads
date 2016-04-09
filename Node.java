@@ -15,7 +15,6 @@ public class Node {
 	private List<Segment> inNeighbours = new ArrayList<Segment>(2);
 	private Segment pathSegment;
 	private int depth;
-	private int reachBack;
 	
 	public Node (String input){
 		//Create node from a file line
@@ -56,13 +55,6 @@ public class Node {
 
 	public void setLoc(Location loc) {
 		this.loc = loc;
-	}
-	public void setReachBack(int reachBack) {
-		this.reachBack = reachBack;
-	}
-
-	public int getReachBack() {
-		return this.reachBack;
 	}
 
 	public List<Segment> getOutNeighbours() {

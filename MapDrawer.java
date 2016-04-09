@@ -25,7 +25,7 @@ public class MapDrawer extends GUI{
 	private List<Segment> prevSegments;
 	private String mode = "search";
 	private List<Node> routePoints; 
-	private List<Node> artPoints;
+	private Set<Node> artPoints;
 	
 	private final Color RED = new Color(255,0,0);
 	private final Color BLUE = new Color(0,0,255);
@@ -163,17 +163,17 @@ public class MapDrawer extends GUI{
 	protected void onMove(Move m) {
 		
 		switch(m){
-			case ZOOM_IN: zoom(1);
+			case ZOOM_IN: zoom(2);
 				break;
-			case ZOOM_OUT: zoom(-1);
+			case ZOOM_OUT: zoom(-2);
 				break;
-			case NORTH: move(0,5);
+			case NORTH: move(0,2);
 				break;
-			case SOUTH: move(0,-5);
+			case SOUTH: move(0,-2);
 				break;
-			case EAST: move(5,0);
+			case EAST: move(2,0);
 				break;
-			case WEST: move(-5,0);
+			case WEST: move(-2,0);
 				break;
 		default:
 			break;

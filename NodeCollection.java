@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.Stack;
@@ -135,77 +136,67 @@ public class NodeCollection {
 		}
 	}
 
-	public List<Node> findCriticalPoints() {
+	public Set<Node> findCriticalPoints() {
 		for(Node node : nodes.values()){
 			node.setDepth(Integer.MAX_VALUE);
 		}
-		List<Node> artPoints = new ArrayList<Node>();
-
-		Node startNode = nodes.get(13812);
-		startNode.setDepth(0);
-		for(Node neighbour : startNode.getNeighbours()){
-			if(neighbour.getDepth() == Integer.MAX_VALUE){
-				iterateArtPoints(neighbour, startNode, artPoints);
+		Set<Node> artPoints = new HashSet<Node>();
+		
+		for(Entry<Integer, Node> entry : nodes.entrySet()){
+			Integer subTree = 0;
+			Node node = entry.getValue();
+			if(node.getDepth() == Integer.MAX_VALUE){
+				node.setDepth(0);
+				for(Node neighbour : node.getNeighbours()){
+					if(neighbour.getDepth() == Integer.MAX_VALUE){
+						iterateArtPoints(neighbour, node, artPoints);
+					}
+					subTree++;
+				}		
+			}
+			if(subTree > 1){
+				artPoints.add(node);
 			}
 		}
-//		for (Node point : artPoints){
-//			System.out.println(point.getId());
-//		}
 		System.out.println(artPoints.size());
 		return artPoints;
 	}
-	private void iterateArtPoints(Node firstNode, Node root, List<Node> artPoints){
+	private void iterateArtPoints(Node firstNode, Node root, Set<Node> artPoints){
 		Stack<ArtPointsItem> stackAtWork = new Stack<ArtPointsItem>();
-		stackAtWork.add(new ArtPointsItem(firstNode, 0, root, 1, null));
+		ArtPointsItem rootItem = new ArtPointsItem(root, 0, null, 0, null);
+		stackAtWork.add(new ArtPointsItem(firstNode, 0, rootItem, 1, null));
 
 		while(!stackAtWork.empty()){
 			ArtPointsItem stackItem = stackAtWork.peek();
-//			System.out.println("stackItem");
-//			System.out.println(stackItem.curNode.getId());
-//			System.out.println(stackItem.reachBack);
-//			System.out.println(stackItem.parent.getId());
-//			System.out.println(stackItem.depth);
-
-				
 			Node node = stackItem.curNode;
 			if(stackItem.children == null){
 				node.setDepth(stackItem.depth);
-//				stackItem.reachBack = stackItem.depth;
-				node.setReachBack(stackItem.depth);
+				stackItem.reachBack =stackItem.depth;
 				stackItem.children = new LinkedList<Node>();
 				for(Node neighbour : node.getNeighbours()){
-					if(neighbour != stackItem.parent){
+					if(neighbour != stackItem.parentItem.curNode){
 						stackItem.children.add(neighbour);		
 					}
 				}
 			}
 			else if(stackItem.children.size() > 0){
-//				System.out.println("children");
-//				for(Node child : stackItem.children){
-//					System.out.println(child.getId());
-//				}
 				Node child = stackItem.children.poll();
 				if(child.getDepth() < Integer.MAX_VALUE){
-					stackItem.reachBack = Math.min(node.getReachBack(), child.getDepth());
-					node.setReachBack(stackItem.reachBack);
+					stackItem.reachBack = Math.min(stackItem.reachBack, child.getDepth());
 				}
 				else {
-					stackAtWork.add(new ArtPointsItem(child, 0, node, node.getDepth()+1, null));
+					stackAtWork.add(new ArtPointsItem(child, 0, stackItem, node.getDepth()+1, null));
 				}
 			}
 			else {
 				if(firstNode != node){
-					if(node.getReachBack() >= stackItem.parent.getDepth()){
-//						System.out.println("adding");
-						artPoints.add(stackItem.parent);
+					if(stackItem.reachBack >= stackItem.parentItem.depth){
+						artPoints.add(stackItem.parentItem.curNode);
 					}
-//					System.out.println("removing");
-	
-					stackItem.parent.setReachBack(Math.min(stackItem.parent.getReachBack(), node.getReachBack()));
+					stackItem.parentItem.reachBack = Math.min(stackItem.parentItem.reachBack, stackItem.reachBack);
 				}
 				stackAtWork.pop();
 			}
 		}
 	}
-
 }
