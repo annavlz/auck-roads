@@ -141,7 +141,6 @@ public class NodeCollection {
 			node.setDepth(Integer.MAX_VALUE);
 		}
 		Set<Node> artPoints = new HashSet<Node>();
-		
 		for(Entry<Integer, Node> entry : nodes.entrySet()){
 			Integer subTree = 0;
 			Node node = entry.getValue();
@@ -152,13 +151,12 @@ public class NodeCollection {
 						iterateArtPoints(neighbour, node, artPoints);
 					}
 					subTree++;
-				}		
+				}
 			}
 			if(subTree > 1){
 				artPoints.add(node);
-			}
+			}			
 		}
-		System.out.println(artPoints.size());
 		return artPoints;
 	}
 	private void iterateArtPoints(Node firstNode, Node root, Set<Node> artPoints){
